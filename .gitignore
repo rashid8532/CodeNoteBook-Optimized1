@@ -1,0 +1,6 @@
+.env
+.venv/
+__pycache__/
+node_modules/
+dist/
+my_seceret_key
