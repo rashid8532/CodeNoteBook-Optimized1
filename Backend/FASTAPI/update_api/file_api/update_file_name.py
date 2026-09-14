@@ -2,10 +2,10 @@ from fastapi import APIRouter,Depends,HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import and_,or_
 from DATABASE.database import get_db
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
 from DATABASE.Tables.file_table import File 
 from DATABASE.Tables.projects_table import Project
 from DATABASE.Tables.users_table import User
+from FASTAPI.user import currentUser
 
 
 router = APIRouter()
@@ -15,8 +15,8 @@ def update_file_name(
     file_name : str,
     file_updated_name : str,
     db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
 ):
+    current_user = currentUser.get()
     files = db.query(File).filter(
         and_(
             current_user.id == Project.user_id,

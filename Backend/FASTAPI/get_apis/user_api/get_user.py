@@ -2,7 +2,7 @@ from fastapi import APIRouter,Depends,HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from DATABASE.database import get_db 
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
+from FASTAPI.user import currentUser
 from DATABASE.Tables.users_table import User 
 
 
@@ -10,9 +10,9 @@ router = APIRouter()
 
 @router.get("/get_user_data")
 def get_user_data(
-    current_user : User = Depends(get_current_user),
     db: Session =Depends(get_db)
     ):
+    current_user = currentUser.get()
     user = db.query(User).filter(User.id == current_user.id).first()
     userData={
         "UserName" : user.username,

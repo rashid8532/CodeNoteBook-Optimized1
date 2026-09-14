@@ -4,8 +4,7 @@ from sqlalchemy import or_,and_
 from DATABASE.Tables.projects_table import Project
 from DATABASE.database import get_db 
 from DATABASE.Tables.users_table import User
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
-
+from FASTAPI.user import currentUser
 
 router = APIRouter()
 
@@ -14,9 +13,9 @@ def update_project(
     project_name : str,
     updated_name : str,
     updated_description : str = "updated description",
-    current_user : User = Depends(get_current_user),
     db : Session = Depends(get_db)
 ):
+    current_user = currentUser.get()
 
     
     project = db.query(Project).filter(

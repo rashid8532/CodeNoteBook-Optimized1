@@ -5,7 +5,7 @@ from DATABASE.Tables.users_table import User
 from DATABASE.Tables.file_table import File
 from DATABASE.Tables.projects_table import Project
 from DATABASE.database import get_db
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
+from FASTAPI.user import currentUser
 
 
 router = APIRouter()
@@ -13,9 +13,9 @@ router = APIRouter()
 @router.delete("/delete_file")
 def delete_file(
     file_name : str,
-    db : Session = Depends(get_db),
-    current_user : User = Depends(get_current_user)
+    db : Session = Depends(get_db)
 ):
+    current_user = currentUser.get()
     print("came to fillter")
     file = db.query(File).filter(
         and_(

@@ -1,8 +1,8 @@
 from fastapi import APIRouter,Depends,HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import or_,and_
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
 from DATABASE.Tables.projects_table import Project
+from FASTAPI.user import currentUser
 from DATABASE.Tables.users_table import User
 from DATABASE.Tables.file_table import File
 from DATABASE.database import get_db
@@ -12,9 +12,9 @@ router = APIRouter()
 
 @router.post("/create_file")
 def create_file(file : CreateFile,
-    current_user : User = Depends(get_current_user),
     db : Session = Depends(get_db),
 ):
+    current_user = currentUser.get()
     print("call of the api started")
     filtered_file = db.query(Project).filter(
         and_(

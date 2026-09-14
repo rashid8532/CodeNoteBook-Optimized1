@@ -1,7 +1,12 @@
-from fastapi import APIRouter,Request,HTTPException
+from fastapi import APIRouter,Request,HTTPException,Depends
+from sqlalchemy.orm import Session
 from jose import jwt,JWTError
 import os
 from dotenv import load_dotenv
+from DATABASE.Tables.users_table import User
+from DATABASE.database import SessionLocal
+from FASTAPI.user import currentUser
+
 
 load_dotenv()
 
@@ -20,20 +25,45 @@ async def authenticationmiddleware(request:Request,call_next):
             detail="Not Authenticated"
         )
     try:
-        scheme, token = authorization.split(" ")
+        scheme, token = authorization.split(" ",1)
         if scheme.lower() != "bearer":
             raise HTTPException(
                 status_code=401,
                 detail="Invalid Scheme"
             )
-        jwt.decode(
+        payload = jwt.decode(
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM]
         )
+        username : str = payload.get("sub")
+
+        if not username :
+            raise HTTPException(
+                status_code=404,
+                detail="user not found"
+            )
+        db:Session=SessionLocal()
+
+        user = db.query(User).filter(username == User.username).first()
+        
+        if not user:
+            raise HTTPException(
+                status_code=404,
+                detail= "user not found"
+                )
+        tokenContext = currentUser.set(user)
+
+        try:
+            return await call_next(request)
+
+        finally:
+            currentUser.reset(tokenContext)
+
     except(JWTError,ValueError):
         raise HTTPException(
             status_code=401,
             detail="Invalid Token"
         )
-    return await call_next(request)
+    finally:
+        db.close()

@@ -1,14 +1,14 @@
-from fastapi import APIRouter,Depends
+from fastapi import APIRouter
 from FASTAPI.AI.pydantic_model_AI import AI
 from FASTAPI.AI.API.gemini import get_Response
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
-
+from FASTAPI.user import currentUser
 
 
 router = APIRouter()
 
 @router.post("/ai")
-def Ai_call(call_content : AI,current_user = Depends(get_current_user)):
+def Ai_call(call_content : AI):
+    currentuser = currentUser.get()
     response = get_Response(
         call_content.action,
         call_content.language,

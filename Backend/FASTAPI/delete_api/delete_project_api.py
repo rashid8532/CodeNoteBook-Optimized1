@@ -4,7 +4,7 @@ from sqlalchemy import or_,and_
 from DATABASE.Tables.users_table import User
 from DATABASE.Tables.projects_table import Project
 from DATABASE.database import get_db
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
+from FASTAPI.user import currentUser
 from DATABASE.Tables.file_table import File
 
 
@@ -13,9 +13,9 @@ router = APIRouter()
 @router.delete("/delete_project")
 def delete_project(
     project_name : str,
-    current_user : User = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
+    current_user = currentUser.get()
     project = db.query(Project).filter(
         and_(
             Project.project_name == project_name,

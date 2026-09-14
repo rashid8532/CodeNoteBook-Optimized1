@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from DATABASE.database import get_db
 from DATABASE.Tables.projects_table import Project
 from FASTAPI.post_apis.pydanticModels.new_project_model import create_projects
-from FASTAPI.post_apis.Users_api.auth.Signin_api import get_current_user
+from FASTAPI.user import currentUser
 from DATABASE.Tables.users_table import User
 
 
@@ -12,8 +12,9 @@ router = APIRouter()
 @router.post("/new_project")
 def new_Project(
     project:create_projects,
-    current_user : User =Depends(get_current_user),
     db:Session = Depends(get_db)):
+
+    current_user = currentUser.get()
     
     project_exist = db.query(Project).filter(
         Project.user_id == current_user.id,
