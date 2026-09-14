@@ -38,7 +38,12 @@ export default function AIPanel({ selectedLanguage, editorRef }) {
         try {
             const result = await axios.post(
                 "http://127.0.0.1:8000/ai",
-                givendata
+                givendata,
+                {
+                    headers:{
+                        Authorization:`Bearer ${localStorage.getItem("token")}`
+                    }
+                }
             );
 
             setResponse(result.data.response);

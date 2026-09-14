@@ -65,13 +65,11 @@ def signin(form_data : OAuth2PasswordRequestForm = Depends(),db:Session = Depend
 
 def get_current_user(token:str = Depends(Oauth2_schemes),db:Session =Depends(get_db)):
     try :
-        print("before payload",token,SECRET_KEY,ALGORITHM)
         payload = jwt.decode(
             token,
             SECRET_KEY,
             algorithms=[ALGORITHM]
             )
-        print("after payload",token,SECRET_KEY,ALGORITHM)
         username: str = payload.get("sub")
 
         if username is None :

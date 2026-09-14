@@ -13,6 +13,7 @@ from FASTAPI.update_api.file_api.update_file_content import router as update_fil
 from FASTAPI.delete_api.delete_file_api import router as delete_file_router
 from FASTAPI.get_apis.user_api.get_user import router as user_data_router
 from FASTAPI.AI.API.AI_post_api import router as ai_router
+from FASTAPI.middleware.authmiddleware import authenticationmiddleware
 
 
 app = FastAPI()
@@ -23,6 +24,10 @@ origins =[
     "http://127.0.0.1:5173"
           ]
 
+# Authenticantion middleware
+
+app.middleware("http")(authenticationmiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins= origins, # Allowed frontend
@@ -30,6 +35,8 @@ app.add_middleware(
     allow_methods= ["*"], 
     allow_headers= ["*"]
 )
+
+
 
 app.include_router(signin_router)
 app.include_router(signup_router)
